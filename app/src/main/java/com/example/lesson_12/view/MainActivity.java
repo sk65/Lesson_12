@@ -7,7 +7,9 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,6 +60,21 @@ public class MainActivity extends AppCompatActivity {
                 requestLocationUpdates();
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_LOCATION_PERMISSIONS_REQUEST_CODE) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PERMISSION_GRANTED) {
+                requestLocationUpdates();
+            } else {
+                Toast.makeText(this,
+                        this.getString(R.string.permission_denied),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override

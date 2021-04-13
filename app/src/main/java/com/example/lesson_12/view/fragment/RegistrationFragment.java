@@ -78,9 +78,7 @@ public class RegistrationFragment extends Fragment {
 
         //observe image
         userViewModel.getCurrentUserImgUri().observe(getViewLifecycleOwner(), uri -> {
-            Log.i("dev", "RegFR img uri " + uri);
             if (!(uri == null || uri.isEmpty())) {
-                Log.i("dev", "RegFR img uri " + uri);
                 Glide.with(requireActivity()).load(uri).into(binding.imvRegFragmentAva);
             }
         });
