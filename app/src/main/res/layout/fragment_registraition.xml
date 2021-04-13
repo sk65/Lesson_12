@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.fragment.RegistrationFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_regFragment"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <Button
+        android:id="@+id/btn_pick_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/button_purple"
+        android:text="@string/add_photo"
+        android:textColor="@color/colorWhite"
+        app:layout_constraintBottom_toBottomOf="@+id/imv_regFragment_ava"
+        app:layout_constraintStart_toEndOf="@+id/imv_regFragment_ava"
+        app:layout_constraintTop_toTopOf="@+id/imv_regFragment_ava" />
+
+    <ImageView
+        android:id="@+id/imv_regFragment_ava"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="@string/img_regFragment_user_avatar"
+        android:src="@drawable/ic_no_ava"
+        app:layout_constraintBottom_toTopOf="@+id/til_regFragment_email"
+        app:layout_constraintEnd_toEndOf="@+id/til_regFragment_email"
+        app:layout_constraintHorizontal_bias="0.332"
+        app:layout_constraintStart_toStartOf="@+id/til_regFragment_email" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_regFragment_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:textColorHint="@color/colorGrey"
+        app:errorEnabled="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.30">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorGrey"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/colorGrey"
+            android:textSize="16sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_regFragment_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:textColorHint="@color/colorGrey"
+        app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="@+id/til_regFragment_email"
+        app:layout_constraintStart_toStartOf="@+id/til_regFragment_email"
+        app:layout_constraintTop_toBottomOf="@+id/til_regFragment_email">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:backgroundTint="@color/colorGrey"
+            android:hint="@string/user_name"
+            android:inputType="text"
+            android:textColor="@color/colorGrey"
+            android:textSize="16sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_regFragment_user_last_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:textColorHint="@color/colorGrey"
+        app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="@+id/til_regFragment_email"
+        app:layout_constraintStart_toStartOf="@+id/til_regFragment_email"
+        app:layout_constraintTop_toBottomOf="@+id/til_regFragment_username">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorGrey"
+            android:hint="@string/user_last_name"
+            android:inputType="text"
+            android:textColor="@color/colorGrey"
+            android:textSize="16sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_regFragment_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:textColorHint="@color/colorGrey"
+        app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="@+id/til_regFragment_email"
+        app:layout_constraintStart_toStartOf="@+id/til_regFragment_email"
+        app:layout_constraintTop_toBottomOf="@+id/til_regFragment_user_last_name"
+        app:passwordToggleEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorGrey"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:textColor="@color/colorGrey"
+            android:textSize="16sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_regFragment_confirm_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:textColorHint="@color/colorGrey"
+        app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="@+id/til_regFragment_email"
+        app:layout_constraintStart_toStartOf="@+id/til_regFragment_email"
+        app:layout_constraintTop_toBottomOf="@+id/til_regFragment_password"
+        app:passwordToggleEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorGrey"
+            android:hint="@string/confirm_password"
+            android:inputType="textPassword"
+            android:textColor="@color/colorGrey"
+            android:textSize="16sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/btn_regFragment_sign_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_up"
+        android:textColor="@color/colorWhite"
+        android:background="@drawable/button_red"
+        app:layout_constraintEnd_toEndOf="@+id/til_regFragment_email"
+        app:layout_constraintStart_toStartOf="@+id/til_regFragment_email"
+        app:layout_constraintTop_toBottomOf="@+id/til_regFragment_confirm_password" />
+</androidx.constraintlayout.widget.ConstraintLayout>

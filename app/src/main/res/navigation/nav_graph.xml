@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/authorizationFragment">
+
+    <fragment
+        android:id="@+id/authorizationFragment"
+        android:name="com.example.lesson_12.view.fragment.AuthorizationFragment"
+        android:label="fragment_authorization"
+        tools:layout="@layout/fragment_authorization">
+        <action
+            android:id="@+id/action_authorizationFragment_to_registrationFragment"
+            app:destination="@id/registrationFragment" />
+        <action
+            android:id="@+id/action_authorizationFragment_to_profileFragment"
+            app:destination="@id/profileFragment"
+            app:popUpTo="@+id/authorizationFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.lesson_12.view.fragment.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_authorizationFragment"
+            app:destination="@id/authorizationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.lesson_12.view.fragment.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_registrationFragment"
+            app:destination="@id/registrationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registrationFragment"
+        android:name="com.example.lesson_12.view.fragment.RegistrationFragment"
+        android:label="fragment_registraition"
+        tools:layout="@layout/fragment_registraition">
+        <action
+            android:id="@+id/action_registrationFragment_to_profileFragment"
+            app:destination="@id/profileFragment"
+            app:popUpTo="@+id/authorizationFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+</navigation>
