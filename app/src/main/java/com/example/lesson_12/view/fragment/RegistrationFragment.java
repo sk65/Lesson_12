@@ -18,7 +18,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.SavedStateViewModelFactory;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -31,7 +30,6 @@ import com.example.lesson_12.database.entity.User;
 import com.example.lesson_12.databinding.FragmentRegistraitionBinding;
 import com.example.lesson_12.util.FileUtil;
 import com.example.lesson_12.util.ValidationUtil;
-import com.example.lesson_12.viewmodel.SavedStateViewModel;
 import com.example.lesson_12.viewmodel.UserViewModel;
 
 import java.io.File;
@@ -50,7 +48,6 @@ public class RegistrationFragment extends Fragment {
     private FragmentRegistraitionBinding binding;
 
     private UserViewModel userViewModel;
-    private SavedStateViewModel savedStateViewModel;
 
     private String emailInput;
     private String passwordInput;
@@ -71,10 +68,8 @@ public class RegistrationFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //init view models
-        savedStateViewModel = new ViewModelProvider(requireActivity(),
-                new SavedStateViewModelFactory(requireActivity().getApplication(), this)).get(SavedStateViewModel.class);
-
-        userViewModel = new ViewModelProvider(requireActivity(), ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().getApplication()))
+        userViewModel = new ViewModelProvider(requireActivity(),
+                ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().getApplication()))
                 .get(UserViewModel.class);
 
         //init action bar
@@ -82,8 +77,10 @@ public class RegistrationFragment extends Fragment {
         NavigationUI.setupWithNavController(binding.toolbarRegFragment, navController);
 
         //observe image
-        savedStateViewModel.getImgUriLiveData().observe(getViewLifecycleOwner(), uri -> {
+        userViewModel.getCurrentUserImgUri().observe(getViewLifecycleOwner(), uri -> {
+            Log.i("dev", "RegFR img uri " + uri);
             if (!(uri == null || uri.isEmpty())) {
+                Log.i("dev", "RegFR img uri " + uri);
                 Glide.with(requireActivity()).load(uri).into(binding.imvRegFragmentAva);
             }
         });
@@ -113,7 +110,6 @@ public class RegistrationFragment extends Fragment {
         if (!isAuth) {
             binding.btnRegFragmentSignUp.setOnClickListener(v -> registerUser());
         } else {
-            Log.i("dev", "updateUser");
             long id = SharedPreferencesManager.getInstance().getCurrentUserId();
             userViewModel.findUserById(id).observe(getViewLifecycleOwner(), user -> {
                 binding.btnRegFragmentSignUp.setText(R.string.update);
@@ -139,9 +135,10 @@ public class RegistrationFragment extends Fragment {
                             getActivity().getString(R.string.user_exist_explanations),
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    userViewModel.insert(user);
-                    savedStateViewModel.setUserEmailLiveData(user.getEmail());
-                    SharedPreferencesManager.getInstance().putIsAuth(true);
+                    userViewModel.insertUser(user);
+                    userViewModel.setCurrentUserImgUri(user.getImgUri());
+                    userViewModel.setCurrentUserEmail(emailInput);
+                    userViewModel.setIsAuth(true);
                     navController.navigate(R.id.action_registrationFragment_to_profileFragment);
                 }
             }
@@ -157,9 +154,13 @@ public class RegistrationFragment extends Fragment {
         long userId = SharedPreferencesManager.getInstance().getCurrentUserId();
         if (isAdded()) {
             user.setUserId(userId);
-            userViewModel.update(user);
-            savedStateViewModel.setUserEmailLiveData(user.getEmail());
-            SharedPreferencesManager.getInstance().putIsAuth(true);
+            userViewModel.updateUser(user);
+
+            userViewModel.insertUser(user);
+            userViewModel.setCurrentUserImgUri(user.getImgUri());
+            userViewModel.setCurrentUserEmail(emailInput);
+            userViewModel.setIsAuth(true);
+
             navController.navigate(R.id.action_registrationFragment_to_profileFragment);
         }
 
@@ -194,7 +195,7 @@ public class RegistrationFragment extends Fragment {
         String emailInput = ValidationUtil.getStringFromInputLayout(binding.tilRegFragmentEmail);
         String passwordInput = ValidationUtil.getStringFromInputLayout(binding.tilRegFragmentPassword);
 
-        String imgUri = savedStateViewModel.getImgUriLiveData().getValue();
+        String imgUri = userViewModel.getCurrentUserImgUri().getValue();
         return new User(imgUri, userNameInput, userLastNameInput, emailInput, passwordInput);
     }
 

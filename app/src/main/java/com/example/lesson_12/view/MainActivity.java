@@ -3,18 +3,15 @@ package com.example.lesson_12.view;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.SavedStateViewModelFactory;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
@@ -24,10 +21,9 @@ import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import com.example.lesson_12.R;
-import com.example.lesson_12.SharedPreferencesManager;
 import com.example.lesson_12.util.FileUtil;
 import com.example.lesson_12.view.fragment.RegistrationFragment;
-import com.example.lesson_12.viewmodel.SavedStateViewModel;
+import com.example.lesson_12.viewmodel.UserViewModel;
 import com.example.lesson_12.workmanager.TrackLocationWorker;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -37,26 +33,31 @@ import java.util.concurrent.TimeUnit;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static com.example.lesson_12.SharedPreferencesManager.IS_AUTH_KEY;
 
 
-public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_LOCATION_PERMISSIONS_REQUEST_CODE = 34;
     private final String[] locationPermissions = new String[]{ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION};
-    private SavedStateViewModel savedStateViewModel;
+    private UserViewModel userViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        savedStateViewModel = new ViewModelProvider(this,
-                new SavedStateViewModelFactory(getApplication(), this)).get(SavedStateViewModel.class);
-        if (SharedPreferencesManager.getInstance().getIsAuth()) {
+
+        userViewModel = new ViewModelProvider(this,
+                ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()))
+                .get(UserViewModel.class);
+
+        if (userViewModel.getIsAuth().getValue()) {
             adjustBackStack();
-            requestLocationUpdates();
         }
-        SharedPreferencesManager.getInstance().registerOnSharedPreferenceChangeListener(this);
+        userViewModel.getIsAuth().observe(this, isAuth -> {
+            if (isAuth) {
+                requestLocationUpdates();
+            }
+        });
     }
 
     @Override
@@ -66,24 +67,25 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             switch (requestCode) {
                 case RegistrationFragment.GALLERY_REQUEST:
                     Uri galleryImageUri = data.getData();
-                    savedStateViewModel.setImgUriLiveData(galleryImageUri.toString());
+                    userViewModel.setCurrentUserImgUri(galleryImageUri.toString());
                     break;
                 case RegistrationFragment.REQUEST_CAMERA:
                     if (FileUtil.getCurrentPhotoPath() != null) {
                         File file = new File(FileUtil.getCurrentPhotoPath());
                         Uri cameraImageUri = Uri.fromFile(file);
-                        savedStateViewModel.setImgUriLiveData(cameraImageUri.toString());
+                        userViewModel.setCurrentUserImgUri(cameraImageUri.toString());
                     }
             }
         }
     }
 
     private void startLocationWorkManager() {
-        PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest.Builder(TrackLocationWorker.class, 15, TimeUnit.MINUTES).build();
-//        WorkRequest workRequest
-//                = new OneTimeWorkRequest.Builder(TrackLocationWorker.class)
-//                .build();
-        WorkManager.getInstance(this).enqueue(periodicWorkRequest);
+        if (userViewModel.isUpdate.getValue()) {
+            userViewModel.isUpdate.setValue(false);
+            PeriodicWorkRequest workRequest =
+                    new PeriodicWorkRequest.Builder(TrackLocationWorker.class, 15, TimeUnit.MINUTES).build();
+            WorkManager.getInstance(this).enqueue(workRequest);
+        }
     }
 
     private void adjustBackStack() {
@@ -93,16 +95,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         NavOptions navOptions = new NavOptions.Builder()
                 .setPopUpTo(R.id.authorizationFragment, true)
                 .build();
-        navController.navigate(R.id.action_authorizationFragment_to_profileFragment, null, navOptions);
+        if (!(navController.getCurrentDestination().getId() == R.id.profileFragment)) {
+            navController.navigate(R.id.action_authorizationFragment_to_profileFragment, null, navOptions);
+        }
     }
 
     private void requestLocationUpdates() {
-        Log.i("dev", "Main Activity requestLocationUpdates()");
         if (!checkPermissions()) {
-            Log.i("dev", "Main Activity requestLocationUpdates() !checkPermissions()");
             requestPermissions();
         } else {
-            Log.i("dev", "Main Activity requestLocationUpdates() else");
             locationEnabled();
             startLocationWorkManager();
         }
@@ -143,12 +144,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void requestPermissions() {
-        Log.i("dev", "Main Activity requestPermissions()");
         boolean shouldProvideRationale =
                 ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.ACCESS_FINE_LOCATION);
         if (shouldProvideRationale) {
-            Log.i("dev", "Main Activity requestPermissions() shouldProvideRationale");
             Snackbar.make(
                     findViewById(R.id.nav_host),
                     R.string.permission_rationale,
@@ -160,22 +159,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     })
                     .show();
         } else {
-            Log.i("dev", "Main Activity requestPermissions() else");
             ActivityCompat.requestPermissions(MainActivity.this,
                     locationPermissions,
                     REQUEST_LOCATION_PERMISSIONS_REQUEST_CODE);
         }
     }
 
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(IS_AUTH_KEY)) {
-            boolean isAuth = sharedPreferences.getBoolean(IS_AUTH_KEY, false);
-            if (isAuth) {
-                Log.i("dev", "onSharedPreferenceChanged");
-                requestLocationUpdates();
-            }
-        }
-
-    }
 }

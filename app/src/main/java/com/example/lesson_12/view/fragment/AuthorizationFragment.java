@@ -9,16 +9,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.SavedStateViewModelFactory;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.lesson_12.R;
-import com.example.lesson_12.SharedPreferencesManager;
 import com.example.lesson_12.databinding.FragmentAuthorizationBinding;
 import com.example.lesson_12.util.ValidationUtil;
-import com.example.lesson_12.viewmodel.SavedStateViewModel;
 import com.example.lesson_12.viewmodel.UserViewModel;
 
 
@@ -26,12 +23,11 @@ public class AuthorizationFragment extends Fragment {
     private NavController navController;
     private FragmentAuthorizationBinding binding;
     private UserViewModel userViewModel;
-    private SavedStateViewModel savedStateViewModel;
     private String emailInput;
     private String passwordInput;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         navController = NavHostFragment.findNavController(this);
         binding = FragmentAuthorizationBinding.inflate(inflater, container, false);
@@ -41,9 +37,6 @@ public class AuthorizationFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        savedStateViewModel = new ViewModelProvider(requireActivity(),
-                new SavedStateViewModelFactory(requireActivity().getApplication(), this)).get(SavedStateViewModel.class);
-
         userViewModel = new ViewModelProvider(requireActivity(), ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().getApplication()))
                 .get(UserViewModel.class);
 
@@ -61,10 +54,10 @@ public class AuthorizationFragment extends Fragment {
                     Toast.makeText(getActivity(), getContext().getString(R.string.wrong_password_explanations),
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    savedStateViewModel.setImgUriLiveData(user.getImgUri());
-                    savedStateViewModel.setUserEmailLiveData(emailInput);
-                    SharedPreferencesManager.getInstance().putIsAuth(true);
-                    SharedPreferencesManager.getInstance().putCurrentUserId(user.getUserId());
+                    userViewModel.setCurrentUserImgUri(user.getImgUri());
+                    userViewModel.setCurrentUserEmail(emailInput);
+                    userViewModel.setCurrentUserId(user.getUserId());
+                    userViewModel.setIsAuth(true);
                     navController.navigate(R.id.action_authorizationFragment_to_profileFragment);
                 }
             });
