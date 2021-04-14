@@ -38,7 +38,7 @@ public class UserRepository {
 
     public UserRepository(Context context) {
         this.context = context;
-        userDao = UserDatabase.getInstance(context.getApplicationContext()).userDao();
+        userDao = UserDatabase.getInstance().userDao();
     }
 
     public void findLocation() {

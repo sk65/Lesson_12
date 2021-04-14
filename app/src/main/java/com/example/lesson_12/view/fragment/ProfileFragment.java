@@ -2,7 +2,6 @@ package com.example.lesson_12.view.fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,7 +102,6 @@ public class ProfileFragment extends Fragment {
                                     if (userLocations != null) {
                                         viewAdapter.setUserLocations(userLocations);
                                     }
-
                                 }
                             }
                         });
@@ -122,6 +120,11 @@ public class ProfileFragment extends Fragment {
                 binding.toolbarAcFragment,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
+
+        //toggle.setDrawerIndicatorEnabled(false);
+        //  toggle.setToolbarNavigationClickListener(view -> drawerLayout.openDrawer(GravityCompat.START));
+        // toggle.setHomeAsUpIndicator(R.drawable.ic_baseline_dehaze_24);
+
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
     }

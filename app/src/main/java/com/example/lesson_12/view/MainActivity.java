@@ -40,6 +40,7 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_LOCATION_PERMISSIONS_REQUEST_CODE = 34;
+    private static final int LOCATION_SETTINGS_REQUEST_CODE = 47;
     private final String[] locationPermissions = new String[]{ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION};
     private UserViewModel userViewModel;
 
@@ -92,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
                         Uri cameraImageUri = Uri.fromFile(file);
                         userViewModel.setCurrentUserImgUri(cameraImageUri.toString());
                     }
+                case LOCATION_SETTINGS_REQUEST_CODE:
+                    requestLocationUpdates();
+                    break;
             }
         }
     }
@@ -150,7 +154,9 @@ public class MainActivity extends AppCompatActivity {
                 .setTitle(R.string.location_alert_title)
                 .setMessage(R.string.locatio_alert_explanations)
                 .setCancelable(false)
-                .setPositiveButton(R.string.enable, (paramDialogInterface, paramInt) -> startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
+                .setPositiveButton(R.string.enable, (paramDialogInterface, paramInt) ->
+                        startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), LOCATION_SETTINGS_REQUEST_CODE)
+                )
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }

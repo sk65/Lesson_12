@@ -1,7 +1,5 @@
 package com.example.lesson_12.database;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
@@ -9,6 +7,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.example.lesson_12.App;
 import com.example.lesson_12.dao.UserDao;
 import com.example.lesson_12.database.entity.User;
 import com.example.lesson_12.database.entity.UserLocation;
@@ -24,9 +23,10 @@ public abstract class UserDatabase extends RoomDatabase {
 
     public abstract UserDao userDao();
 
-    public static synchronized UserDatabase getInstance(Context context) {
+    public static synchronized UserDatabase getInstance() {
         if (instance == null) {
-            instance = Room.databaseBuilder(context.getApplicationContext(),
+            ;
+            instance = Room.databaseBuilder(App.contextWeakReference.get(),
                     UserDatabase.class, DB_NAME)
                     .addMigrations(MIGRATION_1_2)
                     .build();
